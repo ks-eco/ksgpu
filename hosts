@@ -1,0 +1,16 @@
+#The site wide list of k8s clusters
+
+# the mongo servers need a mongod_port variable set, and they must not conflict.
+[all]
+ks-01
+ks-02
+
+# etcd clusters, must be odd number
+[k8s-etcd]
+ks-01
+
+[k8s-master]
+ks-01
+
+[k8s-worker]
+ks-02
