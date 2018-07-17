@@ -1,6 +1,11 @@
 #The site wide list of k8s clusters
+[all:vars]
 
-# the mongo servers need a mongod_port variable set, and they must not conflict.
+k8s_version=1.11.0
+
+[local]
+localhost
+
 [all]
 ks-01
 ks-02

@@ -45,5 +45,5 @@ username ALL=(ALL) NOPASSWD:ALL
 ## Run
 
 ```bash
-ansible-playbook -i hosts site.yaml
+ansible-playbook --become --ask-become-pass -i hosts site.yaml
 ```

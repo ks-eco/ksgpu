@@ -1,0 +1,11 @@
+- name: pull a docker image that contain all necessary files for installation
+  command: echo "TODO run 'docker pull image:version'"
+  register: todo
+
+- debug: msg="{{ todo.stdout }}"
+- debug: msg="{{ todo.stderr }}"
+
+- name: create a local depot directory to store files
+  file:
+    path: "{{local_depot_dir}}"
+    state: directory

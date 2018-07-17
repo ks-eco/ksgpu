@@ -1,5 +1,12 @@
 ---
 
-- hosts: all
+- name: sanity check all hosts
+  hosts: all
+  gather_facts: False
   roles:
-  - role: check
+    - role: check
+
+- name: Prepare required files on localhost
+  hosts: local
+  roles:
+    - role: download
