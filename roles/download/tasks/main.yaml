@@ -9,3 +9,6 @@
   file:
     path: "{{local_depot_dir}}"
     state: directory
+
+- name: copy files from docker image to local depot dir
+  command: echo "TODO"

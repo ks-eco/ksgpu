@@ -1,0 +1,17 @@
+- name: create k8s directory
+  file:
+    path: "{{k8s_root}}/{{k8s_version}}/bin"
+    state: directory
+
+- name: copy k8s binary to each node
+  copy:
+    src: "{{local_depot_dir}}/hyperkube"
+    dest: "{{k8s_root}}/{{k8s_version}}/bin"
+    mode: 0766
+
+
+- name: create all kube binary links from hyperkube
+  shell: |
+    cd "{{k8s_root}}/{{k8s_version}}"/bin
+    ./hyperkube --make-symlinks
+  become: yes

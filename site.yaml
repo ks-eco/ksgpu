@@ -10,3 +10,9 @@
   hosts: local
   roles:
     - role: download
+
+- name: Copy files to all nodes
+  hosts: all
+  gather_facts: False
+  roles:
+    - role: prepare
