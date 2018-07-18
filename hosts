@@ -6,12 +6,12 @@ k8s_version=1.11.0
 [local]
 localhost
 
-[all]
+[k8s-all]
 ks-01
 ks-02
 
 # etcd clusters, must be odd number
-[k8s-etcd]
+[etcd]
 ks-01
 
 [k8s-master]

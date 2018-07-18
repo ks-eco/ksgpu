@@ -1,0 +1,15 @@
+- name: create etcd directory
+  file:
+    path: "{{ etcd_root }}"
+    state: directory
+
+- name: copy etcd binaries to etcd dir
+  copy:
+    src: "{{ local_depot_dir }}/etcd-linux-amd64/{{ item }}"
+    dest: "{{etcd_root}}"
+    mode: 0755
+  with_items:
+    - etcd
+    - etcdctl
+
+
