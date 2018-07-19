@@ -15,3 +15,5 @@
     cd "{{k8s_root}}/{{k8s_version}}"/bin
     ./hyperkube --make-symlinks
   become: yes
+
+  

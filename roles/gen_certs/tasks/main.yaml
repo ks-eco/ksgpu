@@ -1,0 +1,20 @@
+- name: create a local cert directory to generate certificates
+  file:
+    path: "{{ local_certs_dir }}"
+    state: directory
+
+- name: copy ca-config.json file
+  copy:
+    src: ca-config.json
+    dest: "{{ local_certs_dir }}/"
+
+- name: generate *-csr.json file
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{ local_certs_dir }}/{{item}}"
+  with_items:
+    - admin-csr.json
+    - ca-csr.json
+    - kube-proxy-csr.json
+    - kubernetes-csr.json
+    - etcd-csr.json

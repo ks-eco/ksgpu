@@ -1,0 +1,20 @@
+{
+    "CN": "etcd",
+    "hosts": [
+        "127.0.0.1",
+        "{{ etcd_ip_list }}"
+    ],
+    "key": {
+        "algo": "rsa",
+        "size": 2048
+    },
+    "names": [
+     {
+       "C": "{{ csr_country }}",
+       "L": "{{ csr_location }}",
+       "O": "{{ csr_organization }}",
+       "OU": "{{ csr_organization_unit }}",
+       "ST": "{{ csr_state }}"
+     }
+    ]
+}

@@ -4,12 +4,13 @@
   hosts: all
   gather_facts: False
   roles:
-    - role: check
+    - check
 
-#- name: Prepare required files on localhost
-#  hosts: local
-#  roles:
-#    - role: download
+- name: Prepare required files on localhost
+  hosts: deploy
+  roles:
+    - download
+    - gen_certs
 
 #- name: Copy files to all nodes
 #  hosts: k8s-all
@@ -17,8 +18,8 @@
 #  roles:
 #    - role: prepare
 
-- name: Set up etcd 
-  hosts: etcd
-  gather_facts: False
-  roles:
-    - role: etcd    
+#- name: Set up etcd 
+#  hosts: etcd
+#  gather_facts: False
+#  roles:
+#   - role: etcd    

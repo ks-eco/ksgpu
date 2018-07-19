@@ -3,7 +3,7 @@
 
 k8s_version=1.11.0
 
-[local]
+[deploy]
 localhost
 
 [k8s-all]

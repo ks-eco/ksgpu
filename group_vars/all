@@ -1,5 +1,6 @@
 k8s_root: /opt/k8s.io
 local_depot_dir: /tmp/ksgpu/depot
+local_certs_dir: /tmp/ksgpu/certs
 
 etcd_root: /opt/coreos/etcd-linux-amd64
 
