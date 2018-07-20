@@ -12,4 +12,7 @@
     - etcd
     - etcdctl
 
+#  notify:
+#    - "restart etcd service"
+
 

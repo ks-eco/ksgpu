@@ -2,7 +2,9 @@
     "CN": "etcd",
     "hosts": [
         "127.0.0.1",
-        "{{ etcd_ip_list }}"
+        {%for h in groups['etcd'] %}
+        "{{hostvars[h].ansible_ssh_host}}",
+        {%endfor%}
     ],
     "key": {
         "algo": "rsa",

@@ -44,6 +44,14 @@ username ALL=(ALL) NOPASSWD:ALL
 
 ## Run
 
+
+```bash
+# Just check syntax:
+ansible-playbook site.yaml --syntax-check -i hosts
+# list hosts
+ansible-playbook site.yaml --list-hosts -i hosts
+```
+
 ```bash
 ansible-playbook --become --ask-become-pass -i hosts site.yaml
 ```
