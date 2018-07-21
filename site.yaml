@@ -18,8 +18,8 @@
 #  roles:
 #    - role: prepare
 
-#- name: Set up etcd 
-#  hosts: etcd
-#  gather_facts: False
-#  roles:
-#   - role: etcd    
+- name: Set up etcd
+  hosts: etcd
+  gather_facts: False
+  roles:
+   - role: etcd

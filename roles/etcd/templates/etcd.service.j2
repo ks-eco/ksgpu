@@ -1,0 +1,30 @@
+[Unit]
+Description=etcd
+Documentation=https://github.com/coreos
+
+[Service]
+Type=notify
+ExecStart={{ etcd_root }}/etcd \
+  --name {{ inventory_hostname }}  \
+  --cert-file={{ etcd_ssl_dir }}/etcd.pem \
+  --key-file={{ etcd_ssl_dir }}/etcd-key.pem \
+  --peer-cert-file={{ etcd_ssl_dir }}/etcd.pem \
+  --peer-key-file={{ etcd_ssl_dir }}/etcd-key.pem \
+  --trusted-ca-file={{ etcd_ssl_dir }}/ca.pem \
+  --peer-trusted-ca-file={{ etcd_ssl_dir }}/ca.pem \
+  --peer-client-cert-auth \
+  --client-cert-auth \
+  --initial-advertise-peer-urls https://{{ ansible_host }}:2380 \
+  --listen-peer-urls https://{{ ansible_host }}:2380 \
+  --listen-client-urls https://{{ ansible_host }}:2379,http://127.0.0.1:2379 \
+  --advertise-client-urls https://{{ ansible_host }}:2379 \
+  --initial-cluster-token ksgpu-etcd-token \
+  --initial-cluster {{ etcd_cluster_list }} \
+  --initial-cluster-state=new \
+  --data-dir={{ etcd_var_data_dir }}
+LimitNOFILE=65536
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

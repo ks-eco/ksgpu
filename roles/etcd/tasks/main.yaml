@@ -1,18 +1,43 @@
 - name: create etcd directory
   file:
-    path: "{{ etcd_root }}"
+    path: "{{ item }}"
     state: directory
+  with_items:
+    - "{{ etcd_root }}"
+    - "{{ etcd_ssl_dir }}"
+    - "{{ etcd_var_data_dir }}"
+  become: yes
 
 - name: copy etcd binaries to etcd dir
   copy:
     src: "{{ local_depot_dir }}/etcd-linux-amd64/{{ item }}"
-    dest: "{{etcd_root}}"
+    dest: "{{ etcd_root }}"
     mode: 0755
   with_items:
     - etcd
     - etcdctl
+  become: yes
 
+- name: copy etcd ssl files
+  copy:
+    src: "{{ local_certs_dir }}/{{ item }}"
+    dest: "{{ etcd_ssl_dir }}"
+  with_items:
+    - etcd.pem
+    - etcd-key.pem
+    - ca.pem
+  become: yes
 #  notify:
 #    - "restart etcd service"
 
-
+- name: generate etcd service file
+  template:
+    src: etcd.service.j2
+    dest: /etc/systemd/system/etcd.service.2
+  become: yes
+#- name: start etcd systemd service
+#  template: src=etc/systemd/system/etcd.service.j2
+#            dest=/etc/systemd/system/etcd.service
+#            mode=0644
+#  notify:
+#    - "restart etcd service"

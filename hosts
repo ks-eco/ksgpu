@@ -1,18 +1,23 @@
-#The site wide list of k8s clusters
+# The site wide list of k8s clusters
 [all:vars]
 
 k8s_version=1.11.0
+
+# etcd_ips="{% for h in groups['etcd'] %}{{ h }}=https://{{ hostvars[h].ansible_host }}:2380,{% endfor %}"
+etcd_cluster_list="{% for h in groups['etcd'] %}{{ hostvars[h].inventory_hostname }}=https://{{ hostvars[h].ansible_host }}:2380,{% endfor %}"
+
+
 
 [deploy]
 localhost
 
 [k8s-all]
-ks-01 ansible_ssh_host=192.168.1.6
-ks-02 ansible_ssh_host=192.168.1.13
+ks-01 ansible_host=192.168.1.6
+ks-02 ansible_host=192.168.1.13
 
 # etcd clusters, must be odd number
 [etcd]
-ks-01 ansible_ssh_host=192.168.1.6
+ks-01 ansible_host=192.168.1.6
 
 [k8s-master]
 ks-01

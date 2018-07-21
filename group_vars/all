@@ -2,13 +2,19 @@ k8s_root: /opt/k8s.io
 local_depot_dir: /tmp/ksgpu/depot
 local_certs_dir: /tmp/ksgpu/certs
 
+# etcd settings
 etcd_root: /opt/coreos/etcd-linux-amd64
+etcd_ssl_dir: /etc/etcd/ssl
+etcd_var_data_dir: /etc/lib/etcd
+
+# k8s master settings
+
+# k8s worker settings
 
 
 # for generating CSR with CFSSL
-
 csr_country: "US"  # C
-csr_location: "Key West"  # L 
-csr_organization: "Company, LLC"  # O 
+csr_location: "Key West"  # L
+csr_organization: "Company, LLC"  # O
 csr_organization_unit: "DevOp" # OU
 csr_state: "FL"  # ST

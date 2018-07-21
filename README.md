@@ -1,14 +1,18 @@
 # ksgpu
 
+Deploy a (GPU-enabled) production-ready kubernetes cluster.
 
 ## Prerequisite
 
-### 1. Install `ansible`
+### 1. Install `ansible` on local deploy machine
 
+```bash
+(sudo) pip3 install ansible
+```
 
-### 2. Install `cfssl` on local machine
+### 2. Install `cfssl` on local deploy machine
 
-* Linux: 
+* Linux:
 
 ```bash
 wget -q --show-progress --https-only --timestamping  https://pkg.cfssl.org/R1.2/cfssl_linux-amd64 \
@@ -21,7 +25,7 @@ wget -q --show-progress --https-only --timestamping  https://pkg.cfssl.org/R1.2/
 ### 3. Setup passwordless login from client to all hosts
 
 ```bash
-ssh-keygen 
+ssh-keygen
 # three Enters
 
 # copy the key to each host:
@@ -40,10 +44,7 @@ sudo visudo
 username ALL=(ALL) NOPASSWD:ALL
 ```
 
-
-
 ## Run
-
 
 ```bash
 # Just check syntax:
@@ -53,5 +54,5 @@ ansible-playbook site.yaml --list-hosts -i hosts
 ```
 
 ```bash
-ansible-playbook --become --ask-become-pass -i hosts site.yaml
+ansible-playbook --ask-become-pass -i hosts site.yaml
 ```

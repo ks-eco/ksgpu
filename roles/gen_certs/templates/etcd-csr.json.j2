@@ -1,9 +1,9 @@
 {
     "CN": "etcd",
     "hosts": [
-        "127.0.0.1",
-        {%for h in groups['etcd'] %}
-        "{{hostvars[h].ansible_ssh_host}}",
+        "127.0.0.1" {%for h in groups['etcd'] %}
+,
+        "{{hostvars[h].ansible_host}}"
         {%endfor%}
     ],
     "key": {
