@@ -1,5 +1,8 @@
 - name: restart etcd
-  service:
+  systemd:
     name: etcd
     state: restarted
+    enabled: yes
+    daemon_reload: yes
   listen: "restart etcd service"
+  become: yes

@@ -23,3 +23,9 @@
   gather_facts: False
   roles:
    - role: etcd
+
+- name: setup k8s master
+  hosts: k8s-master
+  gather_facts: False
+  roles:
+    - role: master

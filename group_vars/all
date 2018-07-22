@@ -7,6 +7,7 @@ etcd_root: /opt/coreos/etcd-linux-amd64
 etcd_ssl_dir: /etc/etcd/ssl
 etcd_var_data_dir: /etc/lib/etcd
 
+k8s_etc: /etc/kubernetes
 # k8s master settings
 
 # k8s worker settings
@@ -18,3 +19,6 @@ csr_location: "Key West"  # L
 csr_organization: "Company, LLC"  # O
 csr_organization_unit: "DevOp" # OU
 csr_state: "FL"  # ST
+
+# Other constant
+systemd_service_dir: /etc/systemd/system/

@@ -27,17 +27,13 @@
     - etcd-key.pem
     - ca.pem
   become: yes
-#  notify:
-#    - "restart etcd service"
+  notify:
+    - "restart etcd service"
 
 - name: generate etcd service file
   template:
     src: etcd.service.j2
-    dest: /etc/systemd/system/etcd.service.2
+    dest: "{{ systemd_service_dir }}/etcd.service"
   become: yes
-#- name: start etcd systemd service
-#  template: src=etc/systemd/system/etcd.service.j2
-#            dest=/etc/systemd/system/etcd.service
-#            mode=0644
-#  notify:
-#    - "restart etcd service"
+  notify:
+    - "restart etcd service"

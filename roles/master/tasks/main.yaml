@@ -1,0 +1,8 @@
+- name: create k8s directory
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ k8s_etc }}"
+  become: yes
+
