@@ -37,3 +37,7 @@
   become: yes
   notify:
     - "restart etcd service"
+
+#  TODO: check status
+#etcdctl --key-file=/tmp/ksgpu/certs/etcd name=ks-01 \
+# peerURLs=https://192.168.1.6:2380 clientURLs=https://192.168.1.6:...

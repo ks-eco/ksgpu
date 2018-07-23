@@ -6,11 +6,11 @@
   roles:
     - check
 
-- name: Prepare required files on localhost
-  hosts: deploy
-  roles:
-    - download
-    - gen_certs
+#- name: Prepare required files on localhost
+#  hosts: deploy
+#  roles:
+#    - download
+#    - gen_certs
 
 #- name: Copy files to all nodes
 #  hosts: k8s-all
@@ -18,11 +18,11 @@
 #  roles:
 #    - role: prepare
 
-- name: Set up etcd
-  hosts: etcd
-  gather_facts: False
-  roles:
-   - role: etcd
+#- name: Set up etcd
+#  hosts: etcd
+#  gather_facts: False
+#  roles:
+#   - role: etcd
 
 - name: setup k8s master
   hosts: k8s-master

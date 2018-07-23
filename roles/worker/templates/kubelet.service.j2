@@ -1,0 +1,34 @@
+[Unit]
+Description=Kubernetes Kubelet
+Documentation=https://github.com/GoogleCloudPlatform/kubernetes
+After=docker.service
+Requires=docker.service
+
+[Service]
+WorkingDirectory=/var/lib/kubelet
+ExecStart=/usr/local/bin/hyperkube kubelet \
+  --pod-infra-container-image=tsz.io/k8s/pause-amd64:3.0 \
+  --kubeconfig=/var/lib/kubelet/kubeconfig \
+  --kube-reserved cpu=200m,memory=512M \
+  --register-node=true \
+  --network-plugin=cni \
+  --cni-conf-dir=/etc/cni/net.d \
+  --node-labels=node-role.kubernetes.io/node=true \
+  --cni-bin-dir=/opt/cni/bin \
+  --cluster-dns=${DNS_SVC_ADDR} \
+  --cluster-domain=cluster.local \
+  --tls-cert-file=/var/lib/kubelet/${worker_nodes[$id]}.pem \
+  --tls-private-key-file=/var/lib/kubelet/${worker_nodes[$id]}-key.pem \
+  --allow-privileged=true \
+  --fail-swap-on=false \
+  --logtostderr=true \
+  --v=2
+ExecStartPost=/sbin/iptables -A INPUT -s 10.0.0.0/8 -p tcp --dport 4194 -j ACCEPT
+ExecStartPost=/sbin/iptables -A INPUT -s 172.16.0.0/12 -p tcp --dport 4194 -j ACCEPT
+ExecStartPost=/sbin/iptables -A INPUT -s 192.168.0.0/16 -p tcp --dport 4194 -j ACCEPT
+ExecStartPost=/sbin/iptables -A INPUT -p tcp --dport 4194 -j DROP
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

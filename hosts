@@ -1,12 +1,24 @@
 # The site wide list of k8s clusters
 [all:vars]
 
+####################################################
+#   Likely to change
+####################################################
 k8s_version=1.11.0
+# make sure the following do not conflict with your
+# Ethernet network settings
+k8s_service_cidr="10.68.0.0/16"
+k8s_cluster_cidr="172.20.0.0/16"
 
-# etcd_ips="{% for h in groups['etcd'] %}{{ h }}=https://{{ hostvars[h].ansible_host }}:2380,{% endfor %}"
-etcd_cluster_list="{% for h in groups['etcd'] %}{{ hostvars[h].inventory_hostname }}=https://{{ hostvars[h].ansible_host }}:2380,{% endfor %}"
+# usually the first one from k8s_service_idr
+k8s_kubernetes_svc_ip="10.68.0.1"
+k8s_dns_svc_ip="10.68.0.2"
 
 
+####################################################
+#        Less likely to change 
+####################################################
+k8s_node_range="30000-32767"
 
 [deploy]
 localhost
