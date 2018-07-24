@@ -28,3 +28,18 @@
   notify:
     - "restart kube-apiserver service"
 
+- name: generate k8s-controller-manager service file
+  template:
+    src: kube-controller-manager.service.j2
+    dest: "{{ systemd_service_dir }}/kube-controller-manager.service"
+  become: yes
+  notify:
+    - "restart kube-controller-manager service"
+
+- name: generate k8s-scheduler service file
+  template:
+    src: kube-scheduler.service.j2
+    dest: "{{ systemd_service_dir }}/kube-scheduler.service"
+  become: yes
+  notify:
+    - "restart kube-scheduler service"

@@ -10,6 +10,8 @@ k8s_version=1.11.0
 k8s_service_cidr="10.68.0.0/16"
 k8s_cluster_cidr="172.20.0.0/16"
 
+k8s_cluster_name="ksgpu-cluster"
+
 # usually the first one from k8s_service_idr
 k8s_kubernetes_svc_ip="10.68.0.1"
 k8s_dns_svc_ip="10.68.0.2"
