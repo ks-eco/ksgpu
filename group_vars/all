@@ -18,7 +18,8 @@ k8s_ssl_dir: "{{ k8s_etc_dir }}/ssl"
 # k8s master settings
 
 # k8s worker settings
-
+kubelet_etc_dir: /var/lib/kubelet
+kube-proxy_etc_dir: /var/lib/kube-proxy
 
 # for generating CSR with CFSSL
 csr_country: "US"  # C

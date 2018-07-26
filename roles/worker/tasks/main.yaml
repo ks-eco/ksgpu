@@ -1,0 +1,24 @@
+- name: create k8s directory for worker
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ kubelet_etc_dir }}"
+    - "{{ kube-proxy_etc_dir }}"
+  become: yes
+
+  - name: generate kubelet service file
+  template:
+    src: kubelet.service.j2
+    dest: "{{ systemd_service_dir }}/kubelet.service"
+  become: yes
+  notify:
+    - "restart kubelet service"
+
+- name: generate kube-proxy service file
+  template:
+    src: kube-proxy.service.j2
+    dest: "{{ systemd_service_dir }}/kube-proxy.service"
+  become: yes
+  notify:
+    - "restart kube-proxy service"
