@@ -4,8 +4,10 @@
     state: directory
   with_items:
     - "{{ kubelet_etc_dir }}"
+    - "{{ kubelet_ssl_dir }}"
     - "{{ kube-proxy_etc_dir }}"
   become: yes
+
 
   - name: generate kubelet service file
   template:
