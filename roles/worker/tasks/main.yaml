@@ -3,13 +3,20 @@
     path: "{{ item }}"
     state: directory
   with_items:
-    - "{{ kubelet_etc_dir }}"
-    - "{{ kubelet_ssl_dir }}"
-    - "{{ kube-proxy_etc_dir }}"
+    - "{{ kubelet_var_dir }}"
+    - "{{ kube_proxy_var_dir }}"
   become: yes
 
-
-  - name: generate kubelet service file
+- name: copy ssl files
+  copy:
+    src: "{{ local_certs_dir }}/{{inventory_hostname}}/{{item}}"
+    dest: "{{ kubelet_var_dir }}"
+  with_items:
+    - "{{inventory_hostname}}-key.pem"
+    - "{{inventory_hostname}}.pem"    
+  become: yes
+  
+- name: generate kubelet service file
   template:
     src: kubelet.service.j2
     dest: "{{ systemd_service_dir }}/kubelet.service"
