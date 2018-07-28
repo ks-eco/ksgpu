@@ -1,7 +1,7 @@
 k8s_root: /opt/k8s.io
 k8s_bin_dir: "{{ k8s_root}}/{{ k8s_version }}/bin"
-local_depot_dir: /tmp/ksgpu/depot
-local_certs_dir: /tmp/ksgpu/certs
+local_depot_dir: "{{ lookup('env','HOME') }}/.ksgpu/depot"
+local_certs_dir: "{{ lookup('env','HOME') }}/.ksgpu/certs"
 
 # etcd settings
 etcd_root: /opt/coreos/etcd-linux-amd64
