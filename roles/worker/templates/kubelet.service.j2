@@ -5,20 +5,20 @@ After=docker.service
 Requires=docker.service
 
 [Service]
-WorkingDirectory=/var/lib/kubelet
-ExecStart=/usr/local/bin/hyperkube kubelet \
-  --pod-infra-container-image=tsz.io/k8s/pause-amd64:3.0 \
-  --kubeconfig=/var/lib/kubelet/kubeconfig \
+WorkingDirectory={{kubelet_var_dir}}
+ExecStart={{k8s_bin_dir}}/hyperkube kubelet \
+  --pod-infra-container-image=mirrorgooglecontainers/pause-amd64:3.1 \
+  --kubeconfig={{kubelet_var_dir}}/{{ inventory_hostname }}.kubeconfig \
   --kube-reserved cpu=200m,memory=512M \
   --register-node=true \
   --network-plugin=cni \
   --cni-conf-dir=/etc/cni/net.d \
   --node-labels=node-role.kubernetes.io/node=true \
   --cni-bin-dir=/opt/cni/bin \
-  --cluster-dns=${DNS_SVC_ADDR} \
+  --cluster-dns={{ k8s_dns_svc_ip }} \
   --cluster-domain=cluster.local \
-  --tls-cert-file=/var/lib/kubelet/${worker_nodes[$id]}.pem \
-  --tls-private-key-file=/var/lib/kubelet/${worker_nodes[$id]}-key.pem \
+  --tls-cert-file={{kubelet_var_dir}}/{{ inventory_hostname }}.pem \
+  --tls-private-key-file={{kubelet_var_dir}}/{{ inventory_hostname }}-key.pem \
   --allow-privileged=true \
   --fail-swap-on=false \
   --logtostderr=true \

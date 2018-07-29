@@ -4,12 +4,10 @@ Documentation=https://github.com/kubernetes/kubernetes
 After=network.target
 
 [Service]
-WorkingDirectory=/var/lib/kube-proxy
-ExecStart=/usr/local/bin/hyperkube kube-proxy \
-  --cluster-cidr=${CLUSTER_CIDR} \
-  --kubeconfig=/var/lib/kube-proxy/kubeconfig \
-  --proxy-mode=iptables \
-  --v=2
+WorkingDirectory={{kube_proxy_var_dir}}
+
+ExecStart={{k8s_bin_dir}}/hyperkube kube-proxy --config {{ kube_proxy_var_dir }}/kube-proxy.config
+
 Restart=on-failure
 RestartSec=5
 LimitNOFILE=65536

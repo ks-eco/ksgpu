@@ -1,3 +1,5 @@
+# TODO install socat conntrack ipset
+
 - name: create k8s directory for worker
   file:
     path: "{{ item }}"
@@ -13,16 +15,72 @@
     dest: "{{ kubelet_var_dir }}"
   with_items:
     - "{{inventory_hostname}}-key.pem"
-    - "{{inventory_hostname}}.pem"    
+    - "{{inventory_hostname}}.pem"
   become: yes
+
+- name: copy kube-proxy pem file
+  copy:
+    src: "{{ local_certs_dir }}/kube-proxy.pem"
+    dest: "{{ kube_proxy_var_dir }}"
+  become: yes
+
+# TODO delete the ca file
+- name: copy ca file
+  copy:
+    src: "{{ local_certs_dir }}/ca.pem"
+    dest: "{{ item }}"
+  with_items:
+    - "{{kubelet_var_dir}}"
+    - "{{kube_proxy_var_dir}}"
+  become: yes  
   
-- name: generate kubelet service file
+- name: generate certificates for kubelet
+  shell: |
+    cd "{{ kubelet_var_dir }}"
+    {{k8s_bin_dir}}/hyperkube kubectl config set-cluster {{k8s_cluster_name}} \
+            --certificate-authority=ca.pem \
+            --embed-certs=true \
+            --server=https://{{ hostvars[groups['k8s-master'][0]].ansible_host }}:6443 \
+            --kubeconfig={{ inventory_hostname }}.kubeconfig
+    {{k8s_bin_dir}}/hyperkube kubectl config set-credentials system:node:{{ inventory_hostname }} \
+            --client-certificate={{ inventory_hostname }}.pem \
+            --client-key={{ inventory_hostname }}-key.pem \
+            --embed-certs=true \
+            --kubeconfig={{ inventory_hostname }}.kubeconfig
+    {{k8s_bin_dir}}/hyperkube kubectl config set-context default \
+            --cluster={{k8s_cluster_name}} \
+            --user=system:node:{{ inventory_hostname }} \
+            --kubeconfig={{ inventory_hostname }}.kubeconfig
+    {{k8s_bin_dir}}/hyperkube kubectl config use-context default --kubeconfig={{ inventory_hostname }}.kubeconfig
+  become: yes
+
+- name: generate certificates for kube-proxy
+  shell: |
+    cd "{{ kube_proxy_var_dir }}"
+    {{k8s_bin_dir}}/kubectl config set-cluster {{k8s_cluster_name}} \
+            --certificate-authority=ca.pem \
+            --embed-certs=true \
+            --server=https://{{ hostvars[groups['k8s-master'][0]].ansible_host }}:6443 \
+            --kubeconfig=kube-proxy.kubeconfig
+    {{k8s_bin_dir}}/kubectl config set-credentials system:kube-proxy \
+            --client-certificate=kube-proxy.pem \
+            --client-key={{ inventory_hostname }}-key.pem \
+            --embed-certs=true \
+            --kubeconfig=kube-proxy.kubeconfig
+    {{k8s_bin_dir}}/kubectl config set-context default \
+            --cluster={{k8s_cluster_name}} \
+            --user=system:kube-proxy \
+            --kubeconfig=kube-proxy.kubeconfig
+    {{k8s_bin_dir}}/kubectl config use-context default --kubeconfig=kube-proxy.kubeconfig
+  become: yes
+
+- name: generate kube-proxy config file
   template:
-    src: kubelet.service.j2
-    dest: "{{ systemd_service_dir }}/kubelet.service"
+    src: "kube-proxy.config.j2"
+    dest: "{{ kube_proxy_var_dir }}/kube-proxy.config"
   become: yes
   notify:
-    - "restart kubelet service"
+    - "restart kube-proxy service"
 
 - name: generate kube-proxy service file
   template:
@@ -31,3 +89,13 @@
   become: yes
   notify:
     - "restart kube-proxy service"
+
+
+#- name: generate kubelet service file
+#  template:
+#    src: kubelet.service.j2
+#    dest: "{{ systemd_service_dir }}/kubelet.service"
+#  become: yes
+#  notify:
+#    - "restart kubelet service"
+

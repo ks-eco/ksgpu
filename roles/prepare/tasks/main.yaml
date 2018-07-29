@@ -2,12 +2,14 @@
   file:
     path: "{{k8s_bin_dir}}"
     state: directory
+  become: yes
 
 - name: copy k8s binary to each node
   copy:
     src: "{{local_depot_dir}}/hyperkube"
     dest: "{{k8s_bin_dir}}"
     mode: 0755
+  become: yes
 
 - name: create all kube binary links from hyperkube
   shell: |

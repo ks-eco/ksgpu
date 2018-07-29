@@ -3,6 +3,11 @@
     path: "{{ local_certs_dir }}"
     state: directory
 
+- name: create a .kube dir
+  file:
+    path: "~/.kube"
+    state: directory
+
 - name: copy ca-config.json file
   copy:
     src: ca-config.json
@@ -56,9 +61,12 @@
 #          --user=kube-proxy --kubeconfig=kube-proxy.kubeconfig
 #    {{local_depot_dir}}/hyperkube kubectl config use-context default --kubeconfig=kube-proxy.kubeconfig
 
+
 #- name: generate kubeconfig file for kubelet
 #  shell: |
-#    {{local_depot_dir}}/hyperkube kubectl config set-cluster kubernetes --certificate-authority=ca.pem --embed-certs=true \
+#    cd 
+#    cd .kube
+#    {{local_depot_dir}}/hyperkube kubectl config set-cluster kubernetes --certificate-authority={{ local_certs_dir }}/ca.pem --embed-certs=true \
 #          --server=https://{{ hostvars[groups['k8s-master'][0]].ansible_host }}:6443  --kubeconfig=kubectl.kubeconfig
 #    {{local_depot_dir}}/hyperkube kubectl config set-credentials admin --client-certificate=admin.pem --embed-certs=true \
 #          --client-key=admin-key.pem --kubeconfig=kubectl.kubeconfig
