@@ -1,16 +1,16 @@
 {
-    "CN": "Kubernetes",
+    "CN": "system:kube-controller-manager",
     "key": {
         "algo": "rsa",
         "size": 2048
     },
     "names": [
-     {
+       {
        "C": "{{ csr_country }}",
        "L": "{{ csr_location }}",
-       "O": "Kubernetes",
+       "O": "system:kube-controller-maanger",
        "OU": "{{ csr_organization_unit }}",
        "ST": "{{ csr_state }}"
-     }
+        }
     ]
 }
