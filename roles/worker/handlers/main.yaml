@@ -1,4 +1,4 @@
-- name: restart kubelet
+- name: restart kubelet service
   systemd:
     name: kubelet
     state: restarted
@@ -7,7 +7,7 @@
   listen: "restart kubelet service"
   become: yes
 
-- name: restart kube-proxy
+- name: restart kube-proxy service
   systemd:
     name: kube-proxy
     state: restarted
