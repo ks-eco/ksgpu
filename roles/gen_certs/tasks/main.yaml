@@ -18,11 +18,14 @@
     src: "{{ item }}.j2"
     dest: "{{ local_certs_dir }}/{{item}}"
   with_items:
-    - admin-csr.json
     - ca-csr.json
+    - etcd-csr.json    
+    - admin-csr.json
     - kube-proxy-csr.json
     - kubernetes-csr.json
-    - etcd-csr.json
+    - kube-controller-manager-csr.json
+    - kube-scheduler.json
+    - service-account-csr.json
 
 - name: generate certificates
   shell: |
@@ -31,12 +34,19 @@
     cfssl gencert  -ca=ca.pem  -ca-key=ca-key.pem  -config=ca-config.json  -profile=kubernetes \
       admin-csr.json | cfssljson -bare admin
     cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kubernetes \
+      kube-controller-manager-csr.json | cfssljson -bare kube-controller-manager
+    cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kubernetes \
       kube-proxy-csr.json | cfssljson -bare kube-proxy
     cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kubernetes \
-      etcd-csr.json | cfssljson -bare etcd
+      kube-scheduler-csr.json | cfssljson -bare kube-scheduler
     cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json \
       -hostname={{k8s_kubernetes_svc_ip}},{{master_nodes_list}},{{master_ips_list}},127.0.0.1,kubernetes.default \
-      -profile=kubernetes  kubernetes-csr.json | cfssljson -bare kubernetes  
+      -profile=kubernetes  kubernetes-csr.json | cfssljson -bare kubernetes
+    cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kubernetes \
+      service-account-csr.json | cfssljson -bare service-account 
+    cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kubernetes \
+      etcd-csr.json | cfssljson -bare etcd
+
 
 ## workers
 - name: generate certificate dir for each worker
@@ -47,32 +57,72 @@
 
 - name: generate *-csr.json file for each worker
   template:
-    src: "per-worker-csr.json.j2"
+    src: "kubelet-csr.json.j2"
     dest: "{{ local_certs_dir }}/{{item}}/{{ item }}-csr.json"
   with_items: "{{ groups['k8s-worker'] }}"
 
 - name: generate certificates for each worker
   shell: |
     cd "{{ local_certs_dir }}/{{item}}"
-    cfssl gencert -ca=../ca.pem -ca-key=../ca-key.pem -config=../ca-config.json -hostname={{item}} \
-          --profile=kubernetes {{item}}-csr.json | cfssljson -bare {{item}}
+    cfssl gencert -ca=../ca.pem -ca-key=../ca-key.pem -config=../ca-config.json \
+        -hostname={{item}} --profile=kubernetes {{item}}-csr.json | cfssljson -bare {{ item }}
+
+    {{local_depot_dir}}/hyperkube kubectl config set-cluster {{k8s_cluster_name}}  \
+      --certificate-authority=../ca.pem \
+      --embed-certs=true \
+      --server=https://{{ hostvars[groups['k8s-master'][0]].ansible_host }}:6443 \
+      --kubeconfig={{item}}.kubeconfig
+    {{local_depot_dir}}/hyperkube kubectl config set-credentials system:node:{{item}} \
+      --client-certificate={{item}}.pem \
+      --client-key={{item}}-key.pem --embed-certs=true \
+      --kubeconfig={{item}}.kubeconfig
+    {{local_depot_dir}}/hyperkube kubectl config set-context default \
+      --cluster={{k8s_cluster_name}} --user=system:node:{{item}} \
+      --kubeconfig={{item}}.kubeconfig
+    {{local_depot_dir}}/hyperkube kubectl config use-context default --kubeconfig={{item}}.kubeconfig
   with_items: "{{ groups['k8s-worker'] }}"
 
-- name: generate admin kubeconfig file
+- name: generate kubeconfig files for controller pannel
   shell: |
     cd "{{ local_certs_dir }}"
     {{local_depot_dir}}/hyperkube kubectl config set-cluster {{k8s_cluster_name}} \
             --certificate-authority=ca.pem \
             --embed-certs=true \
             --server=https://{{ hostvars[groups['k8s-master'][0]].ansible_host }}:6443 \
-            --kubeconfig=admin.kubeconfig
-    {{local_depot_dir}}/hyperkube kubectl config set-credentials admin \
-            --client-certificate=admin.pem \
-            --client-key=admin-key.pem \
+            --kubeconfig={{item}}.kubeconfig
+    {{local_depot_dir}}/hyperkube kubectl config set-credentials {{item}} \
+            --client-certificate={{item}}.pem \
+            --client-key={{item}}-key.pem \
             --embed-certs=true \
-            --kubeconfig=admin.kubeconfig
+            --kubeconfig={{item}}.kubeconfig
     {{local_depot_dir}}/hyperkube kubectl config set-context default \
             --cluster={{k8s_cluster_name}} \
-            --user=admin \
-            --kubeconfig=admin.kubeconfig
-    {{local_depot_dir}}/hyperkube kubectl config use-context default --kubeconfig=admin.kubeconfig
+            --user=system::{{item}} \
+            --kubeconfig={{item}}.kubeconfig 
+    {{local_depot_dir}}/hyperkube kubectl config use-context default --kubeconfig={{item}}.kubeconfig
+  with_items:
+    - "kube-controller-manager"
+    - "kube-proxy"  
+    - "kube-scheduler"    
+    - "admin"
+
+- name: generate kubeconfig files for controller pannel
+  shell: |
+    cd "{{ local_certs_dir }}"
+    {{local_depot_dir}}/hyperkube kubectl config set-cluster {{k8s_cluster_name}} \
+            --certificate-authority=ca.pem \
+            --embed-certs=true \
+            --server=https://{{ hostvars[groups['k8s-master'][0]].ansible_host }}:6443 \
+            --kubeconfig={{item}}.kubeconfig
+    {{local_depot_dir}}/hyperkube kubectl config set-credentials {{item}} \
+            --client-certificate={{item}}.pem \
+            --client-key={{item}}-key.pem \
+            --embed-certs=true \
+            --kubeconfig={{item}}.kubeconfig
+    {{local_depot_dir}}/hyperkube kubectl config set-context default \
+            --cluster={{k8s_cluster_name}} \
+            --user={{item}} \
+            --kubeconfig={{item}}.kubeconfig 
+    {{local_depot_dir}}/hyperkube kubectl config use-context default --kubeconfig={{item}}.kubeconfig
+  with_items:
+    - "admin"
