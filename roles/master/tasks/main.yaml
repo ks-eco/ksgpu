@@ -21,6 +21,8 @@
     - service-account.pem 
     - kube-controller-manager.kubeconfig
     - kube-scheduler.kubeconfig
+    - etcd.pem
+    - etcd-key.pem
   become: yes
   notify:
     - "restart kube-apiserver service"

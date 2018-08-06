@@ -20,13 +20,12 @@ k8s_config_dir: "{{ k8s_etc_dir }}/config"
 
 # k8s worker settings
 kubelet_var_dir: /var/lib/kubelet
-#kubelet_ssl_dir: "{{ kubelet_etc_dir }}/ssl"
 kube_proxy_var_dir: /var/lib/kube-proxy
 
 # for generating CSR with CFSSL
 csr_country: "US"  # C
 csr_location: "Key West"  # L
-csr_organization: "Company, LLC"  # O
+csr_organization: "Kubernetes"  # O
 csr_organization_unit: "DevOp" # OU
 csr_state: "FL"  # ST
 

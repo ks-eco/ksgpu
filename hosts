@@ -20,7 +20,7 @@ k8s_dns_svc_ip="10.68.0.2"
 ####################################################
 #        Less likely to change 
 ####################################################
-k8s_node_range="30000-32767"
+k8s_port_range="30000-32767"
 
 [deploy]
 localhost
@@ -34,7 +34,7 @@ ks-02 ansible_host=192.168.1.13
 ks-01 ansible_host=192.168.1.6
 
 [k8s-master]
-ks-01
+ks-01 ansible_host=192.168.1.6
 
 [k8s-worker]
-ks-02
+ks-02 ansible_host=192.168.1.13
