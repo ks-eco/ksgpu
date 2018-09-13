@@ -1,9 +1,9 @@
-- name: pull a docker image that contain all necessary files for installation
-  command: echo "TODO run 'docker pull image:version'"
-  register: todo
+- name: pull the docker image that contain all necessary files for installation
+  command: docker pull codemk8/ksbins:1.11.0
+#  register: todo
 
-- debug: msg="{{ todo.stdout }}"
-- debug: msg="{{ todo.stderr }}"
+#- debug: msg="{{ todo.stdout }}"
+#- debug: msg="{{ todo.stderr }}"
 
 - name: create a local depot directory to store files
   file:
@@ -11,4 +11,10 @@
     state: directory
 
 - name: copy files from docker image to local depot dir
-  command: echo "TODO"
+  shell: |
+    docker ps -a # a simple run
+    docker run --rm --name ksbin_temp codemk8/ksbins:1.11.0
+    docker cp ksbin_temp:/ks-eco/binaries/etcdctl "{{local_depot_dir}}"/.
+    docker cp ksbin_temp:/ks-eco/binaries/etcd "{{local_depot_dir}}"/.
+    docker cp ksbin_temp:/ks-eco/binaries/hyperkube "{{local_depot_dir}}"/.
+    docker rm -f ksbin_temp

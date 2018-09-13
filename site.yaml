@@ -1,6 +1,6 @@
 ---
 
-- name: sanity check all hosts
+- name: Sanity check all hosts
   hosts: all
   gather_facts: False
   roles:
@@ -9,7 +9,7 @@
 - name: Prepare required files on localhost
   hosts: deploy
   roles:
-#    - download
+    - download
     - gen_certs
 
 #- name: Copy files to all nodes
@@ -18,17 +18,17 @@
 #  roles:
 #    - role: prepare
 
-- name: Set up etcd
-  hosts: etcd
-  gather_facts: False
-  roles:
-   - role: etcd
+#- name: Set up etcd
+#  hosts: etcd
+#  gather_facts: False
+#  roles:
+#   - role: etcd
 
-- name: setup k8s master
-  hosts: k8s-master
-  gather_facts: False 
-  roles:
-    - role: master
+#- name: setup k8s master
+#  hosts: k8s-master
+#  gather_facts: False 
+#  roles:
+#    - role: master
 
 #- name: setup k8s worker
 #  hosts: k8s-worker

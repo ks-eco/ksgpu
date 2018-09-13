@@ -15,7 +15,7 @@ Deploy a (GPU-enabled) production-ready kubernetes cluster.
 * Linux:
 
 ```bash
-wget -q --show-progress --https-only --timestamping  https://pkg.cfssl.org/R1.2/cfssl_linux-amd64 \
+wget -q --show-progress --https-only --timestamping https://pkg.cfssl.org/R1.2/cfssl_linux-amd64 \
       https://pkg.cfssl.org/R1.2/cfssljson_linux-amd64
   chmod +x cfssl_linux-amd64 cfssljson_linux-amd64
   sudo mv cfssl_linux-amd64 /usr/local/bin/cfssl
@@ -28,7 +28,7 @@ wget -q --show-progress --https-only --timestamping  https://pkg.cfssl.org/R1.2/
 ssh-keygen
 # three Enters
 
-# copy the key to each host:
+# copy the key to each host (replace host* with real hostnames)
 ssh-copy-id -i ~/.ssh/id_rsa host1
 ssh-copy-id -i ~/.ssh/id_rsa host2
 ...
@@ -40,7 +40,7 @@ On each hosts:
 
 ```
 sudo visudo
-# Insert the line
+# Insert the line (replace username with real username)
 username ALL=(ALL) NOPASSWD:ALL
 ```
 
