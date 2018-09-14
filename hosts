@@ -5,36 +5,40 @@
 #   Likely to change
 ####################################################
 k8s_version=1.11.0
-# make sure the following do not conflict with your
-# Ethernet network settings
+# make sure the followings do not conflict with your
+# existing Ethernet network settings
 k8s_service_cidr="10.68.0.0/16"
 k8s_cluster_cidr="172.20.0.0/16"
 
 k8s_cluster_name="ksgpu-cluster"
 
-# usually the first one from k8s_service_idr
+# k8s services (must in k8s_service_cidr)
+# k8s service is usually the first one from k8s_service_idr
 k8s_kubernetes_svc_ip="10.68.0.1"
+# set dns to be the second address
 k8s_dns_svc_ip="10.68.0.2"
 
 
 ####################################################
 #        Less likely to change 
 ####################################################
+ksbin_image="codemk8/ksbins"
 k8s_port_range="30000-32767"
 
 [deploy]
 localhost
 
 [k8s-all]
-ks-01 ansible_host=192.168.1.6
-ks-02 ansible_host=192.168.1.13
+n01 ansible_host=192.168.1.200 ansible_port=22
+n02 ansible_host=192.168.1.201 ansible_port=22
 
 # etcd clusters, must be odd number
 [etcd]
-ks-01 ansible_host=192.168.1.6
+n01 ansible_host=192.168.1.200 ansible_port=22
 
 [k8s-master]
-ks-01 ansible_host=192.168.1.6
+n01 ansible_host=192.168.1.200 ansible_port=22
 
 [k8s-worker]
-ks-02 ansible_host=192.168.1.13
+n01 ansible_host=192.168.1.200 ansible_port=22
+n02 ansible_host=192.168.1.201 ansible_port=22
