@@ -4,7 +4,7 @@ Documentation=https://github.com/kubernetes/kubernetes
 
 [Service]
 ExecStart={{ k8s_bin_dir }}/hyperkube kube-scheduler \
-  --configure={{ k8s_config_dir }}/kube-scheduler.yaml \
+  --config={{ k8s_config_dir }}/kube-scheduler.yaml \
   --v=2
 Restart=on-failure
 RestartSec=5
