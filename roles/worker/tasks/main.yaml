@@ -1,5 +1,13 @@
-# TODO install socat conntrack ipset
-
+- name: install socat conntrack ipset
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - socat
+    - conntrack
+    - ipset
+  become: yes
+    
 - name: create k8s directory for worker
   file:
     path: "{{ item }}"
