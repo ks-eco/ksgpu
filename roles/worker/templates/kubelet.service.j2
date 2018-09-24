@@ -21,6 +21,7 @@ ExecStart={{k8s_bin_dir}}/hyperkube kubelet \
   --tls-private-key-file={{kubelet_var_dir}}/{{ inventory_hostname }}-key.pem \
   --allow-privileged=true \
   --fail-swap-on=false \
+  --cgroup-driver=systemd \
   --logtostderr=true \
   --v=2
 ExecStartPost=/sbin/iptables -A INPUT -s 10.0.0.0/8 -p tcp --dport 4194 -j ACCEPT
