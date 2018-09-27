@@ -8,6 +8,15 @@
     - "{{ k8s_var_lib }}"
   become: yes
 
+
+- name: enable master api server port in 
+  firewalld:
+    port: "{{ item }}"
+    permanent: true
+    state: enabled
+  with_items:
+    - 6443/tcp
+
 - name: copy k8s apiserver ssl files
   copy:
     src: "{{ local_certs_dir }}/{{ item }}"

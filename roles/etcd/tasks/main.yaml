@@ -18,6 +18,14 @@
     - etcdctl
   become: yes
 
+- name: enable etcd server port
+  firewalld:
+    port: "{{ item }}"
+    permanent: true
+    state: enabled
+  with_items:
+    - 2380/tcp
+
 - name: copy etcd ssl files
   copy:
     src: "{{ local_certs_dir }}/{{ item }}"
