@@ -56,3 +56,8 @@ ansible-playbook site.yaml --list-hosts -i hosts
 ```bash
 ansible-playbook --ask-become-pass -i hosts site.yaml
 ```
+
+
+## References
+
+* <https://github.com/gjmzj/kubeasz>
