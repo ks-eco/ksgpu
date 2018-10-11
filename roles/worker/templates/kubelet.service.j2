@@ -10,17 +10,17 @@ ExecStart={{k8s_bin_dir}}/hyperkube kubelet \
   --config {{ kubelet_var_dir }}/kubelet.config \
   --pod-infra-container-image=mirrorgooglecontainers/pause-amd64:3.1 \
   --container-runtime=remote \
-  --kubeconfig={{kubelet_var_dir}}/{{ inventory_hostname }}.kubeconfig \  
+  --kubeconfig={{kubelet_var_dir}}/{{ inventory_hostname }}.kubeconfig \
   --container-runtime-endpoint=unix:///var/run/containerd/containerd.sock \
   --node-labels=node-role.kubernetes.io/node=true \
   --image-pull-progress-deadline=2m \
-  --kube-reserved cpu=200m,memory=512M \  
-  --kubeconfig=/var/lib/kubelet/kubeconfig \
+  --kube-reserved cpu=200m,memory=512M \
+  --kubeconfig={{ kubelet_var_dir }}/{{ inventory_hostname }}.kubeconfig \
   --network-plugin=cni \
-  --cluster-dns={{ k8s_dns_svc_ip }} \  
+  --cluster-dns={{ k8s_dns_svc_ip }} \
   --register-node=true \
-  --allow-privileged=true \  
-  --cgroup-driver=systemd \  
+  --allow-privileged=true \
+  --cgroup-driver=systemd \
   --v=2
 
 ExecStartPost=/sbin/iptables -A INPUT -s 10.0.0.0/8 -p tcp --dport 4194 -j ACCEPT

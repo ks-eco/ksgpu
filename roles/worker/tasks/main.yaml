@@ -7,7 +7,12 @@
     - conntrack
     - ipset
   become: yes
-    
+
+- name: Turn off swap
+  shell: |
+    swapoff -a
+  become: yes
+
 - name: create k8s directory for worker
   file:
     path: "{{ item }}"

@@ -10,7 +10,7 @@ authentication:
 clusterDomain: "cluster.local"
 clusterDNS:
   - "{{k8s_cluster_cidr}}"
-podCIDR: "${{k8s_cluster_cidr}}"
+podCIDR: "{{k8s_cluster_cidr}}"
 runtimeRequestTimeout: "15m"
 tlsCertFile: "{{kubelet_var_dir}}/{{ inventory_hostname }}.pem"
 tlsPrivateKeyFile: "{{kubelet_var_dir}}/{{ inventory_hostname }}-key.pem}}"
