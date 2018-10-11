@@ -25,6 +25,7 @@
     state: enabled
   with_items:
     - 2380/tcp
+  become: yes
 
 - name: copy etcd ssl files
   copy:

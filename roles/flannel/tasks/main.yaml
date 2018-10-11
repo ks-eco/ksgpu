@@ -1,0 +1,9 @@
+- name: create flannel manifest
+  template:
+    src: "kube-flannel.yaml.j2"
+    dest: "{{k8s_config_dir}}/kube-flannel.yaml"
+  become: yes
+  
+- name: run flannel daemonset
+  shell: |
+    {{k8s_bin_dir}}/hyperkube kubectl apply -f {{k8s_config_dir}}/kube-flannel.yaml

@@ -7,23 +7,22 @@ Requires=docker.service
 [Service]
 WorkingDirectory={{kubelet_var_dir}}
 ExecStart={{k8s_bin_dir}}/hyperkube kubelet \
+  --config {{ kubelet_var_dir }}/kubelet.config \
   --pod-infra-container-image=mirrorgooglecontainers/pause-amd64:3.1 \
-  --kubeconfig={{kubelet_var_dir}}/{{ inventory_hostname }}.kubeconfig \
-  --kube-reserved cpu=200m,memory=512M \
-  --register-node=true \
-  --network-plugin=cni \
-  --cni-conf-dir=/etc/cni/net.d \
+  --container-runtime=remote \
+  --kubeconfig={{kubelet_var_dir}}/{{ inventory_hostname }}.kubeconfig \  
+  --container-runtime-endpoint=unix:///var/run/containerd/containerd.sock \
   --node-labels=node-role.kubernetes.io/node=true \
-  --cni-bin-dir=/opt/cni/bin \
-  --cluster-dns={{ k8s_dns_svc_ip }} \
-  --cluster-domain=cluster.local \
-  --tls-cert-file={{kubelet_var_dir}}/{{ inventory_hostname }}.pem \
-  --tls-private-key-file={{kubelet_var_dir}}/{{ inventory_hostname }}-key.pem \
-  --allow-privileged=true \
-  --fail-swap-on=false \
-  --cgroup-driver=systemd \
-  --logtostderr=true \
+  --image-pull-progress-deadline=2m \
+  --kube-reserved cpu=200m,memory=512M \  
+  --kubeconfig=/var/lib/kubelet/kubeconfig \
+  --network-plugin=cni \
+  --cluster-dns={{ k8s_dns_svc_ip }} \  
+  --register-node=true \
+  --allow-privileged=true \  
+  --cgroup-driver=systemd \  
   --v=2
+
 ExecStartPost=/sbin/iptables -A INPUT -s 10.0.0.0/8 -p tcp --dport 4194 -j ACCEPT
 ExecStartPost=/sbin/iptables -A INPUT -s 172.16.0.0/12 -p tcp --dport 4194 -j ACCEPT
 ExecStartPost=/sbin/iptables -A INPUT -s 192.168.0.0/16 -p tcp --dport 4194 -j ACCEPT
