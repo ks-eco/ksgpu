@@ -1,0 +1,28 @@
+---
+- name: Sanity check all hosts
+  hosts: all
+  gather_facts: False
+  roles:
+    - check
+
+- name: deep clean worker
+  hosts: k8s-worker
+  roles:
+#    - role: worker_clean
+
+- name: deep clean master
+  hosts: k8s-master
+  roles:
+#    - role: master_clean
+
+- name: deep clean etcd
+  hosts: etcd
+  roles:
+    - role: etcd_clean
+
+- name: deep clean deployment node
+  hosts: deploy
+  roles:
+    - role: deploy_clean
+
+

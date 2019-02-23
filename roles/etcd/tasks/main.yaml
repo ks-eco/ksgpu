@@ -18,7 +18,7 @@
     - etcdctl
   become: yes
 
-- name: enable etcd server port
+- name: firewalld enable etcd server port
   firewalld:
     port: "{{ item }}"
     permanent: true

@@ -1,0 +1,8 @@
+- name: remove etcd directories
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ local_certs_dir }}"
+    - "~/.kube"
+

@@ -1,0 +1,35 @@
+- name: remove pre-existing k8s directory for worker
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ kubelet_var_dir }}"
+    - "{{ kube_proxy_var_dir }}"
+    - "{{ k8s_var_lib }}"
+    - "/opt/cni/bin"
+    - "/etc/cni/net.d"
+    - "/etc/containerd"
+    - "/usr/local/bin/runc"
+    - "/usr/local/bin/runsc"    
+  become: yes
+
+- name: remove systemctl config files
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ systemd_service_dir }}/kube-proxy.service"
+    - "{{ systemd_service_dir }}/kubelet.service"
+  become: yes
+
+- name: disable kubelet and kube-proxy services for workers
+  systemd:
+    name: "{{ item }}"
+    state: stopped
+    enabled: no
+  with_items:
+    - kubelet
+    - kube-proxy
+  become: yes
+
+  

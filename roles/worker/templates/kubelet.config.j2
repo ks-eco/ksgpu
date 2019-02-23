@@ -6,11 +6,18 @@ authentication:
   webhook:
     enabled: true
   x509:
-    clientCAFile: "{{ k8s_var_lib }}/ca.pem"
+    clientCAFile: "{{ kubelet_var_dir }}/ca.pem"
 clusterDomain: "cluster.local"
 clusterDNS:
-  - "{{k8s_cluster_cidr}}"
+  - "{{k8s_dns_svc_ip}}"
 podCIDR: "{{k8s_cluster_cidr}}"
+allow-privileged: true
+kubeconfig: "{{ kubelet_var_dir }}/{{ inventory_hostname }}.kubeconfig"
 runtimeRequestTimeout: "15m"
+register-node: true
 tlsCertFile: "{{kubelet_var_dir}}/{{ inventory_hostname }}.pem"
-tlsPrivateKeyFile: "{{kubelet_var_dir}}/{{ inventory_hostname }}-key.pem}}"
+tlsPrivateKeyFile: "{{kubelet_var_dir}}/{{ inventory_hostname }}-key.pem"
+cgroup-driver: systemd
+# kube-reserved: 
+#    - cpu: 200m
+#    - memory: 512M

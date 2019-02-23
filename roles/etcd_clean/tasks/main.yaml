@@ -1,0 +1,26 @@
+- name: remove etcd directories
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ etcd_root }}"
+    - "{{ etcd_ssl_dir }}"
+    - "{{ etcd_var_data_dir }}"
+  become: yes
+
+- name: disable etcd service
+  systemd:
+    name: "{{ item }}"
+    state: stopped
+    enabled: no
+  with_items:
+    - etcd
+  become: yes
+
+- name: remove systemctl config files
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ systemd_service_dir }}/etcd.service"
+  become: yes

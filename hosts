@@ -27,7 +27,7 @@ k8s_port_range="30000-32767"
 # Assign hosts for each role
 
 [deploy]
-localhost ansible_port=8022
+localhost ansible_host=localhost ansible_port=8022
 
 [k8s-all]
 n01 ansible_host=192.168.1.200 ansible_port=22

@@ -14,9 +14,12 @@
   shell: |
     docker ps -a # a simple run
     docker rm -f ksbin_temp
+    docker rmi "{{ksbin_image}}":1.11.0
     docker run --rm -d --name ksbin_temp "{{ksbin_image}}":1.11.0
     docker cp ksbin_temp:/ks-eco/binaries/etcdctl "{{local_depot_dir}}"/.
     docker cp ksbin_temp:/ks-eco/binaries/etcd "{{local_depot_dir}}"/.
     docker cp ksbin_temp:/ks-eco/binaries/hyperkube "{{local_depot_dir}}"/.
+    docker cp ksbin_temp:/ks-eco/binaries/cni/ "{{local_depot_dir}}"/.
+    docker cp ksbin_temp:/ks-eco/binaries/cni/runc/ "{{local_depot_dir}}"/cni/. 
     docker cp ksbin_temp:/ks-eco/VERSIONS "{{local_depot_dir}}"/.
     docker rm -f ksbin_temp

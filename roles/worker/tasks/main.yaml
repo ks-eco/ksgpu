@@ -13,6 +13,15 @@
     swapoff -a
   become: yes
 
+- name: remove pre-existing k8s directory for worker
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ kubelet_var_dir }}"
+    - "{{ kube_proxy_var_dir }}"
+  become: yes
+
 - name: create k8s directory for worker
   file:
     path: "{{ item }}"
@@ -23,6 +32,7 @@
     - "{{ k8s_var_lib }}"
     - "/opt/cni/bin"
     - "/etc/cni/net.d"
+    - "/etc/containerd"
   become: yes
 
 - name: copy ssl files
@@ -52,7 +62,54 @@
     - "{{kubelet_var_dir}}"
     - "{{kube_proxy_var_dir}}"
   become: yes  
-  
+
+- name: copy cni binaries to each worker
+  copy:
+    src: "{{local_depot_dir}}/cni/plugin/{{ item }}"
+    dest: "/opt/cni/bin/{{ item }}"
+  with_items:
+    - bridge
+    - dhcp
+    - flannel
+    - host-local
+    - ipvlan
+    - loopback
+    - macvlan
+    - portmap
+    - ptp
+    - sample
+    - tuning
+    - vlan
+  become: yes
+
+- name: copy runc binaries to each node
+  copy:
+    src: "{{local_depot_dir}}/cni/runc/{{ item }}"
+    dest: "/usr/local/bin/{{ item }}"
+  with_items:
+    - runc
+    - runsc
+  become: yes
+   
+- name: generate loopback network configuration file
+  copy:
+    src: 99-loopback.conf
+    dest: /etc/cni/net.d/99-loopback.conf
+  become: yes
+
+- name: generate bridge network configuration file
+  template:
+    src: 10-bridge.conf.j2
+    dest: /etc/cni/net.d/10-bridge.conf
+  become: yes
+
+
+- name: generate containerd configuration file
+  copy:
+    src: config.toml
+    dest: /etc/containerd/config.toml
+  become: yes
+
 - name: generate certificates for kubelet
   shell: |
     cd "{{ kubelet_var_dir }}"
@@ -92,7 +149,7 @@
             --kubeconfig=kube-proxy.kubeconfig
     {{k8s_bin_dir}}/kubectl config use-context default --kubeconfig=kube-proxy.kubeconfig
   become: yes
-
+  
 - name: generate kube-proxy config file
   template:
     src: "kube-proxy.config.j2"
@@ -101,6 +158,13 @@
   notify:
     - "restart kube-proxy service"
 
+- name: generate containerd service file
+  copy:
+    src: containerd.service
+    dest: /etc/systemd/system/containerd.service
+  notify:
+    - "restart containerd service"
+    
 - name: generate kube-proxy service file
   template:
     src: kube-proxy.service.j2
